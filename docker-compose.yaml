@@ -1,0 +1,13 @@
+version: '3.9'
+services: 
+  postgres:
+    image: postgres:15
+    restart: always
+    container_name: demp_pg
+    environment:
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+      POSTGRES_DB: demo
+    ports: ["5432:5432"]
+    volumes: [pg_data:/var/lib/postgresql/data]
+volumes: { pg_data: {} }
