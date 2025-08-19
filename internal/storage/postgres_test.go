@@ -5,8 +5,6 @@ import (
 	"demo-service/internal/model"
 	"testing"
 	"time"
-
-	"github.com/jackc/pgx/v5"
 )
 
 func setupTestDB(t *testing.T) (*Postgres, context.Context, func()) {
@@ -16,66 +14,26 @@ func setupTestDB(t *testing.T) (*Postgres, context.Context, func()) {
 	if err != nil {
 		t.Fatalf("Failed to connect to DB: %v", err)
 	}
-	return p, ctx, func() { p.pool.Close() }
+	return p, ctx, func() { p.Close() }
 }
 
-func runInTransaction(t *testing.T, ctx context.Context, p *Postgres, f func(tx pgx.Tx) error) {
-	tx, err := p.pool.Begin(ctx)
-	if err != nil {
-		t.Fatalf("Begin transaction failed: %v", err)
-	}
-	defer tx.Rollback(ctx)
-
-	if err := f(tx); err != nil {
-		t.Fatalf("Transaction operation failed: %v", err)
-	}
-
-	if err := tx.Commit(ctx); err != nil {
-		t.Fatalf("Commit failed: %v", err)
-	}
-}
-
-func verifyInserted(t *testing.T, ctx context.Context, p *Postgres, table, orderUID string) {
-	var uid string
-	err := p.pool.QueryRow(ctx, `SELECT order_uid FROM `+table+` WHERE order_uid = $1`, orderUID).Scan(&uid)
+func verifyInserted(t *testing.T, ctx context.Context, p *Postgres, table, orderUID string, expectedCount int) {
+	var count int
+	err := p.pool.QueryRow(ctx, "SELECT COUNT(*) FROM "+table+" WHERE order_uid=$1", orderUID).Scan(&count)
 	if err != nil {
 		t.Fatalf("Failed to verify %s: %v", table, err)
 	}
-	if uid != orderUID {
-		t.Errorf("Got OrderUID %s, want %s", uid, orderUID)
+	if count != expectedCount {
+		t.Errorf("Got %d rows in %s, want %d", count, table, expectedCount)
 	}
 }
 
-func TestSaveOrderBase(t *testing.T) {
+func TestSaveOrder(t *testing.T) {
 	p, ctx, cleanup := setupTestDB(t)
 	defer cleanup()
 
 	order := &model.Order{
-		OrderUID:        "test-order-base",
-		TrackNumber:     "TRACK123",
-		Entry:           "ENT123",
-		Locale:          "en",
-		CustomerID:      "cust1",
-		DeliveryService: "ups",
-		Shardkey:        "1",
-		SmID:            1,
-		DateCreated:     time.Now(),
-		OofShard:        "1",
-	}
-
-	runInTransaction(t, ctx, p, func(tx pgx.Tx) error {
-		return p.saveOrderBase(tx, order)
-	})
-
-	verifyInserted(t, ctx, p, "orders", order.OrderUID)
-}
-
-func TestSaveDelivery(t *testing.T) {
-	p, ctx, cleanup := setupTestDB(t)
-	defer cleanup()
-
-	order := &model.Order{
-		OrderUID:        "test-delivery",
+		OrderUID:        "test-order-full",
 		TrackNumber:     "TRACK123",
 		Entry:           "ENT123",
 		Locale:          "en",
@@ -94,113 +52,139 @@ func TestSaveDelivery(t *testing.T) {
 			Region:  "TestRegion",
 			Email:   "john@example.com",
 		},
-	}
-
-	runInTransaction(t, ctx, p, func(tx pgx.Tx) error {
-		if err := p.saveOrderBase(tx, order); err != nil {
-			return err
-		}
-		return p.saveDelivery(tx, order)
-	})
-
-	verifyInserted(t, ctx, p, "deliveries", order.OrderUID)
-}
-
-func TestSavePayment(t *testing.T) {
-	p, ctx, cleanup := setupTestDB(t)
-	defer cleanup()
-
-	order := &model.Order{
-		OrderUID:        "b563feb7b2b84b6test",
-		TrackNumber:     "WBILMTESTTRACK",
-		Entry:           "WBIL",
-		Locale:          "en",
-		CustomerID:      "test",
-		DeliveryService: "meest",
-		Shardkey:        "9",
-		SmID:            99,
-		DateCreated:     time.Now(),
-		OofShard:        "1",
 		Payment: model.Payment{
-			Transaction:  "b563feb7b2b84b6test",
+			Transaction:  "tx123",
 			Currency:     "USD",
 			Provider:     "wbpay",
-			Amount:       1817,
-			PaymentDt:    1637907727,
+			Amount:       1000,
+			PaymentDt:    1690000000,
 			Bank:         "alpha",
-			DeliveryCost: 1500,
-			GoodsTotal:   317,
+			DeliveryCost: 200,
+			GoodsTotal:   800,
 		},
-	}
-
-	runInTransaction(t, ctx, p, func(tx pgx.Tx) error {
-		if err := p.saveOrderBase(tx, order); err != nil {
-			return err
-		}
-		return p.savePayment(tx, order)
-	})
-
-	verifyInserted(t, ctx, p, "payments", order.OrderUID)
-}
-
-func TestSaveItems(t *testing.T) {
-	p, ctx, cleanup := setupTestDB(t)
-	defer cleanup()
-
-	order := &model.Order{
-		OrderUID:        "b563feb7b2b84b6test",
-		TrackNumber:     "WBILMTESTTRACK",
-		Entry:           "WBIL",
-		Locale:          "en",
-		CustomerID:      "test",
-		DeliveryService: "meest",
-		Shardkey:        "9",
-		SmID:            99,
-		DateCreated:     time.Now(),
-		OofShard:        "1",
 		Items: []model.Item{
 			{
-				ChrtID:      12345,
-				TrackNumber: "WBILMTESTTRACK",
-				Price:       100,
-				Rid:         "ab4219087a764ae0btest",
-				Name:        "Test Item 1",
-				Sale:        10,
+				ChrtID:      1,
+				TrackNumber: "TRACK123",
+				Price:       500,
+				Rid:         "rid1",
+				Name:        "Item1",
+				Sale:        50,
 				Size:        "M",
-				TotalPrice:  90,
-				NmID:        123456,
-				Brand:       "Test Brand",
+				TotalPrice:  450,
+				NmID:        111,
+				Brand:       "Brand1",
 				Status:      202,
 			},
 			{
-				ChrtID:      67890,
-				TrackNumber: "WBILMTESTTRACK2",
-				Price:       200,
-				Rid:         "cd4219087a764ae0btest",
-				Name:        "Test Item 2",
-				Sale:        20,
+				ChrtID:      2,
+				TrackNumber: "TRACK123",
+				Price:       550,
+				Rid:         "rid2",
+				Name:        "Item2",
+				Sale:        50,
 				Size:        "L",
-				TotalPrice:  180,
-				NmID:        789012,
-				Brand:       "Test Brand 2",
-				Status:      203,
+				TotalPrice:  500,
+				NmID:        222,
+				Brand:       "Brand2",
+				Status:      202,
 			},
 		},
 	}
 
-	runInTransaction(t, ctx, p, func(tx pgx.Tx) error {
-		if err := p.saveOrderBase(tx, order); err != nil {
-			return err
-		}
-		return p.saveItems(tx, order)
-	})
-
-	var count int
-	err := p.pool.QueryRow(ctx, "SELECT COUNT(*) FROM items WHERE order_uid = $1", order.OrderUID).Scan(&count)
-	if err != nil {
-		t.Fatalf("Failed to count items: %v", err)
+	if err := p.SaveOrder(order); err != nil {
+		t.Fatalf("SaveOrder failed: %v", err)
 	}
-	if count != 2 {
-		t.Errorf("Got %d items, want 2", count)
+
+	verifyInserted(t, ctx, p, "orders", order.OrderUID, 1)
+	verifyInserted(t, ctx, p, "deliveries", order.OrderUID, 1)
+	verifyInserted(t, ctx, p, "payments", order.OrderUID, 1)
+	verifyInserted(t, ctx, p, "items", order.OrderUID, len(order.Items))
+}
+
+func TestGetOrder_Success(t *testing.T) {
+	p, ctx, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	order := &model.Order{
+		OrderUID:        "test-getorder-1",
+		TrackNumber:     "TRACK999",
+		Entry:           "ENT999",
+		Locale:          "en",
+		CustomerID:      "cust2",
+		DeliveryService: "fedex",
+		Shardkey:        "2",
+		SmID:            2,
+		DateCreated:     time.Now(),
+		OofShard:        "2",
+		Delivery: model.Delivery{
+			Name:    "Alice",
+			Phone:   "+987654321",
+			Zip:     "54321",
+			City:    "CityTest",
+			Address: "456 Test Ave",
+			Region:  "RegionTest",
+			Email:   "alice@example.com",
+		},
+		Payment: model.Payment{
+			Transaction:  "tx999",
+			Currency:     "EUR",
+			Provider:     "paypal",
+			Amount:       2000,
+			PaymentDt:    1690000001,
+			Bank:         "sber",
+			DeliveryCost: 300,
+			GoodsTotal:   1700,
+		},
+		Items: []model.Item{
+			{
+				ChrtID:      10,
+				TrackNumber: "TRACK999",
+				Price:       1000,
+				Rid:         "rid10",
+				Name:        "Item10",
+				Sale:        100,
+				Size:        "XL",
+				TotalPrice:  900,
+				NmID:        333,
+				Brand:       "Brand10",
+				Status:      200,
+			},
+		},
+	}
+
+	if err := p.SaveOrder(order); err != nil {
+		t.Fatalf("SaveOrder failed: %v", err)
+	}
+
+	got, err := p.GetOrder(ctx, order.OrderUID)
+	if err != nil {
+		t.Fatalf("GetOrder failed: %v", err)
+	}
+	if got == nil {
+		t.Fatal("GetOrder returned nil order")
+	}
+
+	if got.OrderUID != order.OrderUID {
+		t.Errorf("expected OrderUID %s, got %s", order.OrderUID, got.OrderUID)
+	}
+	if got.CustomerID != order.CustomerID {
+		t.Errorf("expected CustomerID %s, got %s", order.CustomerID, got.CustomerID)
+	}
+	if len(got.Items) != len(order.Items) {
+		t.Errorf("expected %d items, got %d", len(order.Items), len(got.Items))
+	}
+}
+
+func TestGetOrder_NotFound(t *testing.T) {
+	p, ctx, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	got, err := p.GetOrder(ctx, "non-existent-order")
+	if err == nil {
+		t.Errorf("expected error for non-existent order, got nil")
+	}
+	if got != nil {
+		t.Errorf("expected nil order, got %+v", got)
 	}
 }
