@@ -1,4 +1,3 @@
-
 CREATE TABLE orders (
     order_uid VARCHAR(50) PRIMARY KEY,
     track_number VARCHAR(50),

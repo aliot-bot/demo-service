@@ -1,0 +1,1462 @@
+
+
+<html>
+	<head>
+		<title>Coverage Report</title>
+		<meta charset="utf-8" />
+        
+        <style type="text/css">
+        body {
+    background-color: #fff;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+table {
+    margin-left: 10px;
+    border-collapse: collapse;
+}
+
+td {
+    background-color: #fff;
+    padding: 2px;
+}
+
+table.overview td {
+    padding-right: 20px;
+}
+
+td.percent,
+td.linecount {
+    text-align: right;
+}
+
+div.package,
+#totalcov {
+    color: #fff;
+    background-color: #375eab;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px 5px 5px 5px;
+}
+
+div.package,
+#totalcov {
+    float: right;
+    right: 10px;
+}
+
+#totalcov {
+    top: 10px;
+    position: relative;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #375eab;
+    clear: both;
+}
+
+#summaryWrapper {
+    position: fixed;
+    top: 10px;
+    float: right;
+    right: 10px;
+
+}
+
+span.packageTotal {
+    float: right;
+    color: #000;
+}
+
+#doctitle {
+    background-color: #fff;
+    font-size: 24px;
+    margin-top: 20px;
+    margin-left: 10px;
+    color: #375eab;
+    font-weight: bold;
+}
+
+#about {
+    margin-left: 18px;
+    font-size: 10px;
+}
+
+.functitle,
+.funcname {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #375eab;
+}
+
+.funcname {
+    text-align: left;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    padding: 2px 5px 5px;
+    background-color: #e0ebf5;
+}
+
+table.listing {
+    margin-left: 10px;
+}
+
+table.listing td {
+    padding: 0px;
+    font-size: 12px;
+    background-color: #eee;
+    vertical-align: top;
+    padding-left: 10px;
+    border-bottom: 1px solid #fff;
+}
+
+table.listing td:first-child {
+    text-align: right;
+    font-weight: bold;
+    vertical-align: center;
+}
+
+table.listing tr.miss td {
+    background-color: #FFBBB8;
+}
+
+table.listing tr:last-child td {
+    font-weight: normal;
+    color: #000;
+}
+
+table.listing tr:last-child td:first-child {
+    font-weight: bold;
+}
+
+.info {
+    margin-left: 10px;
+}
+
+.info code {}
+
+pre {
+    margin: 1px;
+}
+
+pre.cmd {
+    background-color: #e9e9e9;
+    border-radius: 5px 5px 5px 5px;
+    padding: 10px;
+    margin: 20px;
+    line-height: 18px;
+    font-size: 14px;
+}
+
+a {
+    text-decoration: none;
+    color: #375eab;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+p {
+    margin-left: 10px;
+}
+        </style>
+        
+	</head>
+	<body>
+		<div id="doctitle">Coverage Report</div>
+        
+        <div id="about">Generated on Wed, 20 Aug 2025 01:08:59 +05 with <a href="https://github.com/matm/gocov-html">gocov-html</a></div>
+        
+        
+        <div class="funcname">Report Overview</div>
+            <table class="overview">
+            
+            <tr id="s_pkg_demo-service/cmd/server">
+                <td><code><a href="#pkg_demo-service/cmd/server">demo-service/cmd/server</a></code></td>
+                <td class="percent"><code>0.0%</code></td>
+                <td class="linecount"><code>0/10</code></td>
+            </tr>
+            
+            <tr id="s_pkg_demo-service/internal/storage">
+                <td><code><a href="#pkg_demo-service/internal/storage">demo-service/internal/storage</a></code></td>
+                <td class="percent"><code>42.0%</code></td>
+                <td class="linecount"><code>21/50</code></td>
+            </tr>
+            
+            </table>
+            <p>
+            This coverage report has been generated with the following command:
+            </p>
+            <pre class="cmd">gocov test demo-service/cmd/server demo-service/internal/storage | gocov-html coverage.json</pre>
+        </div>
+        
+        
+        <div id="pkg_demo-service/cmd/server" class="funcname">
+            Package Overview: demo-service/cmd/server
+            <span class="packageTotal">0.0%</span>
+        </div>
+        <p>Please select a function to see what's left for testing.</p>
+
+        <table class="overview">
+        
+            <tr id="s_fn_main">
+                <td>
+                    <code><a href="#fn_main">main(...)</a></code>
+                </td>
+                <td>
+                    <code>demo-service/cmd/server/main.go</code>
+                </td>
+                <td class="percent">
+                    <code>0.0%</code>
+                </td>
+                <td class="linecount">
+                    <code>0/10</code>
+                </td>
+            </tr>
+        
+        </table>
+
+        
+        
+        <div class="funcname" id="fn_main">func main</div>
+        <div class="info">
+            <a href="#s_fn_main">Back</a>
+            <p>In <code>/home/magiconion/demo-service/cmd/server/main.go</code>:</p>
+        </div>
+        <table class="listing">
+            
+            <tr>
+                <td>12</td>
+                <td>
+                    <code><pre>func main() {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>13</td>
+                <td>
+                    <code><pre>        ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>14</td>
+                <td>
+                    <code><pre>        defer cancel()</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>15</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>16</td>
+                <td>
+                    <code><pre>        dsn := &#34;postgres://demo:demo@localhost:5432/demo&#34;</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>17</td>
+                <td>
+                    <code><pre>        storage, err := storage.New(ctx, dsn)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>18</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>19</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>20</td>
+                <td>
+                    <code><pre>                log.Fatal().Err(err).Msg(&#34;Failed to connect to Data Base&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>21</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>22</td>
+                <td>
+                    <code><pre>        defer storage.Close()</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>23</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>24</td>
+                <td>
+                    <code><pre>        log.Info().Msg(&#34;Service started successfully&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>25</td>
+                <td>
+                    <code><pre>        &lt;-ctx.Done()</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>26</td>
+                <td>
+                    <code><pre>        log.Info().Msg(&#34;Service stopped&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>27</td>
+                <td>
+                    <code><pre>}</pre></code>
+                </td>
+            </tr>
+            
+        </table>
+         
+
+        <!--    Can be parsed by external script
+                PACKAGE:demo-service/cmd/server DONE:0.0
+        -->
+        
+        <div id="pkg_demo-service/internal/storage" class="funcname">
+            Package Overview: demo-service/internal/storage
+            <span class="packageTotal">42.0%</span>
+        </div>
+        <p>Please select a function to see what's left for testing.</p>
+
+        <table class="overview">
+        
+            <tr id="s_fn_Postgres.saveItems">
+                <td>
+                    <code><a href="#fn_Postgres.saveItems">Postgres.saveItems(...)</a></code>
+                </td>
+                <td>
+                    <code>demo-service/internal/storage/postgres.go</code>
+                </td>
+                <td class="percent">
+                    <code>60.0%</code>
+                </td>
+                <td class="linecount">
+                    <code>6/10</code>
+                </td>
+            </tr>
+        
+            <tr id="s_fn_Postgres.saveOrderBase">
+                <td>
+                    <code><a href="#fn_Postgres.saveOrderBase">Postgres.saveOrderBase(...)</a></code>
+                </td>
+                <td>
+                    <code>demo-service/internal/storage/postgres.go</code>
+                </td>
+                <td class="percent">
+                    <code>60.0%</code>
+                </td>
+                <td class="linecount">
+                    <code>3/5</code>
+                </td>
+            </tr>
+        
+            <tr id="s_fn_Postgres.saveDelivery">
+                <td>
+                    <code><a href="#fn_Postgres.saveDelivery">Postgres.saveDelivery(...)</a></code>
+                </td>
+                <td>
+                    <code>demo-service/internal/storage/postgres.go</code>
+                </td>
+                <td class="percent">
+                    <code>60.0%</code>
+                </td>
+                <td class="linecount">
+                    <code>3/5</code>
+                </td>
+            </tr>
+        
+            <tr id="s_fn_Postgres.savePayment">
+                <td>
+                    <code><a href="#fn_Postgres.savePayment">Postgres.savePayment(...)</a></code>
+                </td>
+                <td>
+                    <code>demo-service/internal/storage/postgres.go</code>
+                </td>
+                <td class="percent">
+                    <code>60.0%</code>
+                </td>
+                <td class="linecount">
+                    <code>3/5</code>
+                </td>
+            </tr>
+        
+            <tr id="s_fn_New">
+                <td>
+                    <code><a href="#fn_New">New(...)</a></code>
+                </td>
+                <td>
+                    <code>demo-service/internal/storage/postgres.go</code>
+                </td>
+                <td class="percent">
+                    <code>54.5%</code>
+                </td>
+                <td class="linecount">
+                    <code>6/11</code>
+                </td>
+            </tr>
+        
+            <tr id="s_fn_Postgres.SaveOrder">
+                <td>
+                    <code><a href="#fn_Postgres.SaveOrder">Postgres.SaveOrder(...)</a></code>
+                </td>
+                <td>
+                    <code>demo-service/internal/storage/postgres.go</code>
+                </td>
+                <td class="percent">
+                    <code>0.0%</code>
+                </td>
+                <td class="linecount">
+                    <code>0/13</code>
+                </td>
+            </tr>
+        
+            <tr id="s_fn_Postgres.Close">
+                <td>
+                    <code><a href="#fn_Postgres.Close">Postgres.Close(...)</a></code>
+                </td>
+                <td>
+                    <code>demo-service/internal/storage/postgres.go</code>
+                </td>
+                <td class="percent">
+                    <code>0.0%</code>
+                </td>
+                <td class="linecount">
+                    <code>0/1</code>
+                </td>
+            </tr>
+        
+        </table>
+
+        
+        
+        <div class="funcname" id="fn_Postgres.saveItems">func Postgres.saveItems</div>
+        <div class="info">
+            <a href="#s_fn_Postgres.saveItems">Back</a>
+            <p>In <code>/home/magiconion/demo-service/internal/storage/postgres.go</code>:</p>
+        </div>
+        <table class="listing">
+            
+            <tr>
+                <td>107</td>
+                <td>
+                    <code><pre>func (p *Postgres) saveItems(tx pgx.Tx, o *model.Order) error {</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>108</td>
+                <td>
+                    <code><pre>        _, err := tx.Exec(context.Background(), `DELETE FROM items WHERE order_uid = $1`, o.OrderUID)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>109</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>110</td>
+                <td>
+                    <code><pre>                log.Error().Err(err).Str(&#34;order_uid&#34;, o.OrderUID).Msg(&#34;Failed to delete old items&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>111</td>
+                <td>
+                    <code><pre>                return fmt.Errorf(&#34;delete items: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>112</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>113</td>
+                <td>
+                    <code><pre>        for _, item := range o.Items {</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>114</td>
+                <td>
+                    <code><pre>                _, err = tx.Exec(context.Background(),</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>115</td>
+                <td>
+                    <code><pre>                        `INSERT INTO items (order_uid, chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>116</td>
+                <td>
+                    <code><pre>             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>117</td>
+                <td>
+                    <code><pre>                        o.OrderUID, item.ChrtID, item.TrackNumber, item.Price, item.Rid, item.Name,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>118</td>
+                <td>
+                    <code><pre>                        item.Sale, item.Size, item.TotalPrice, item.NmID, item.Brand, item.Status)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>119</td>
+                <td>
+                    <code><pre>                if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>120</td>
+                <td>
+                    <code><pre>                        log.Error().Err(err).Str(&#34;order_uid&#34;, o.OrderUID).Msg(&#34;Failed to insert item&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>121</td>
+                <td>
+                    <code><pre>                        return fmt.Errorf(&#34;insert item: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>122</td>
+                <td>
+                    <code><pre>                }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>123</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>124</td>
+                <td>
+                    <code><pre>        return nil</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>125</td>
+                <td>
+                    <code><pre>}</pre></code>
+                </td>
+            </tr>
+            
+        </table>
+        
+        <div class="funcname" id="fn_Postgres.saveOrderBase">func Postgres.saveOrderBase</div>
+        <div class="info">
+            <a href="#s_fn_Postgres.saveOrderBase">Back</a>
+            <p>In <code>/home/magiconion/demo-service/internal/storage/postgres.go</code>:</p>
+        </div>
+        <table class="listing">
+            
+            <tr>
+                <td>35</td>
+                <td>
+                    <code><pre>func (p *Postgres) saveOrderBase(tx pgx.Tx, o *model.Order) error {</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>36</td>
+                <td>
+                    <code><pre>        _, err := tx.Exec(context.Background(),</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>37</td>
+                <td>
+                    <code><pre>                `INSERT INTO orders (order_uid, track_number, entry, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>38</td>
+                <td>
+                    <code><pre>         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>39</td>
+                <td>
+                    <code><pre>         ON CONFLICT (order_uid) DO UPDATE SET</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>40</td>
+                <td>
+                    <code><pre>            track_number = EXCLUDED.track_number,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>41</td>
+                <td>
+                    <code><pre>            entry = EXCLUDED.entry,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>42</td>
+                <td>
+                    <code><pre>            locale = EXCLUDED.locale,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>43</td>
+                <td>
+                    <code><pre>            internal_signature = EXCLUDED.internal_signature,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>44</td>
+                <td>
+                    <code><pre>            customer_id = EXCLUDED.customer_id,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>45</td>
+                <td>
+                    <code><pre>            delivery_service = EXCLUDED.delivery_service,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>46</td>
+                <td>
+                    <code><pre>            shardkey = EXCLUDED.shardkey,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>47</td>
+                <td>
+                    <code><pre>            sm_id = EXCLUDED.sm_id,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>48</td>
+                <td>
+                    <code><pre>            date_created = EXCLUDED.date_created,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>49</td>
+                <td>
+                    <code><pre>            oof_shard = EXCLUDED.oof_shard`,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>50</td>
+                <td>
+                    <code><pre>                o.OrderUID, o.TrackNumber, o.Entry, o.Locale, o.InternalSignature, o.CustomerID,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>51</td>
+                <td>
+                    <code><pre>                o.DeliveryService, o.Shardkey, o.SmID, o.DateCreated, o.OofShard)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>52</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>53</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>54</td>
+                <td>
+                    <code><pre>                log.Error().Err(err).Str(&#34;order_uid&#34;, o.OrderUID).Msg(&#34;Failed to insert order&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>55</td>
+                <td>
+                    <code><pre>                return fmt.Errorf(&#34;insert order: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>56</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>57</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>58</td>
+                <td>
+                    <code><pre>        return nil</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>59</td>
+                <td>
+                    <code><pre>}</pre></code>
+                </td>
+            </tr>
+            
+        </table>
+        
+        <div class="funcname" id="fn_Postgres.saveDelivery">func Postgres.saveDelivery</div>
+        <div class="info">
+            <a href="#s_fn_Postgres.saveDelivery">Back</a>
+            <p>In <code>/home/magiconion/demo-service/internal/storage/postgres.go</code>:</p>
+        </div>
+        <table class="listing">
+            
+            <tr>
+                <td>61</td>
+                <td>
+                    <code><pre>func (p *Postgres) saveDelivery(tx pgx.Tx, o *model.Order) error {</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>62</td>
+                <td>
+                    <code><pre>        _, err := tx.Exec(context.Background(),</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>63</td>
+                <td>
+                    <code><pre>                `INSERT INTO deliveries (order_uid, name, phone, zip, city, address, region, email)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>64</td>
+                <td>
+                    <code><pre>         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>65</td>
+                <td>
+                    <code><pre>         ON CONFLICT (order_uid) DO UPDATE SET</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>66</td>
+                <td>
+                    <code><pre>            name = EXCLUDED.name,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>67</td>
+                <td>
+                    <code><pre>            phone = EXCLUDED.phone,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>68</td>
+                <td>
+                    <code><pre>            zip = EXCLUDED.zip,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>69</td>
+                <td>
+                    <code><pre>            city = EXCLUDED.city,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>70</td>
+                <td>
+                    <code><pre>            address = EXCLUDED.address,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>71</td>
+                <td>
+                    <code><pre>            region = EXCLUDED.region,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>72</td>
+                <td>
+                    <code><pre>            email = EXCLUDED.email`,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>73</td>
+                <td>
+                    <code><pre>                o.OrderUID, o.Delivery.Name, o.Delivery.Phone, o.Delivery.Zip, o.Delivery.City,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>74</td>
+                <td>
+                    <code><pre>                o.Delivery.Address, o.Delivery.Region, o.Delivery.Email)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>75</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>76</td>
+                <td>
+                    <code><pre>                log.Error().Err(err).Str(&#34;order_uid&#34;, o.OrderUID).Msg(&#34;Failed to insert delivery&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>77</td>
+                <td>
+                    <code><pre>                return fmt.Errorf(&#34;insert delivery: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>78</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>79</td>
+                <td>
+                    <code><pre>        return nil</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>80</td>
+                <td>
+                    <code><pre>}</pre></code>
+                </td>
+            </tr>
+            
+        </table>
+        
+        <div class="funcname" id="fn_Postgres.savePayment">func Postgres.savePayment</div>
+        <div class="info">
+            <a href="#s_fn_Postgres.savePayment">Back</a>
+            <p>In <code>/home/magiconion/demo-service/internal/storage/postgres.go</code>:</p>
+        </div>
+        <table class="listing">
+            
+            <tr>
+                <td>82</td>
+                <td>
+                    <code><pre>func (p *Postgres) savePayment(tx pgx.Tx, o *model.Order) error {</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>83</td>
+                <td>
+                    <code><pre>        _, err := tx.Exec(context.Background(),</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>84</td>
+                <td>
+                    <code><pre>                `INSERT INTO payments (order_uid, transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>85</td>
+                <td>
+                    <code><pre>         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>86</td>
+                <td>
+                    <code><pre>         ON CONFLICT (order_uid) DO UPDATE SET</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>87</td>
+                <td>
+                    <code><pre>            transaction = EXCLUDED.transaction,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>88</td>
+                <td>
+                    <code><pre>            request_id = EXCLUDED.request_id,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>89</td>
+                <td>
+                    <code><pre>            currency = EXCLUDED.currency,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>90</td>
+                <td>
+                    <code><pre>            provider = EXCLUDED.provider,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>91</td>
+                <td>
+                    <code><pre>            amount = EXCLUDED.amount,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>92</td>
+                <td>
+                    <code><pre>            payment_dt = EXCLUDED.payment_dt,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>93</td>
+                <td>
+                    <code><pre>            bank = EXCLUDED.bank,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>94</td>
+                <td>
+                    <code><pre>            delivery_cost = EXCLUDED.delivery_cost,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>95</td>
+                <td>
+                    <code><pre>            goods_total = EXCLUDED.goods_total,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>96</td>
+                <td>
+                    <code><pre>            custom_fee = EXCLUDED.custom_fee`,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>97</td>
+                <td>
+                    <code><pre>                o.OrderUID, o.Payment.Transaction, o.Payment.RequestID, o.Payment.Currency, o.Payment.Provider,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>98</td>
+                <td>
+                    <code><pre>                o.Payment.Amount, o.Payment.PaymentDt, o.Payment.Bank, o.Payment.DeliveryCost,</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>99</td>
+                <td>
+                    <code><pre>                o.Payment.GoodsTotal, o.Payment.CustomFee)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>100</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>101</td>
+                <td>
+                    <code><pre>                log.Error().Err(err).Str(&#34;order_uid&#34;, o.OrderUID).Msg(&#34;Failed to insert payment&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>102</td>
+                <td>
+                    <code><pre>                return fmt.Errorf(&#34;insert payment: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>103</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>104</td>
+                <td>
+                    <code><pre>        return nil</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>105</td>
+                <td>
+                    <code><pre>}</pre></code>
+                </td>
+            </tr>
+            
+        </table>
+        
+        <div class="funcname" id="fn_New">func New</div>
+        <div class="info">
+            <a href="#s_fn_New">Back</a>
+            <p>In <code>/home/magiconion/demo-service/internal/storage/postgres.go</code>:</p>
+        </div>
+        <table class="listing">
+            
+            <tr>
+                <td>17</td>
+                <td>
+                    <code><pre>func New(ctx context.Context, dsn string) (*Postgres, error) {</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>18</td>
+                <td>
+                    <code><pre>        pool, err := pgxpool.New(ctx, dsn)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>19</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>20</td>
+                <td>
+                    <code><pre>                log.Error().Err(err).Msg(&#34;Failed to create pool&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>21</td>
+                <td>
+                    <code><pre>                return nil, fmt.Errorf(&#34;connect: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>22</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>23</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>24</td>
+                <td>
+                    <code><pre>        err = pool.Ping(ctx)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>25</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>26</td>
+                <td>
+                    <code><pre>                pool.Close()</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>27</td>
+                <td>
+                    <code><pre>                log.Error().Err(err).Msg(&#34;Failed to ping DB&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>28</td>
+                <td>
+                    <code><pre>                return nil, fmt.Errorf(&#34;ping: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>29</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>30</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>31</td>
+                <td>
+                    <code><pre>        log.Info().Msg(&#34;Connected to Data Base&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>32</td>
+                <td>
+                    <code><pre>        return &amp;Postgres{pool: pool}, nil</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>33</td>
+                <td>
+                    <code><pre>}</pre></code>
+                </td>
+            </tr>
+            
+        </table>
+        
+        <div class="funcname" id="fn_Postgres.SaveOrder">func Postgres.SaveOrder</div>
+        <div class="info">
+            <a href="#s_fn_Postgres.SaveOrder">Back</a>
+            <p>In <code>/home/magiconion/demo-service/internal/storage/postgres.go</code>:</p>
+        </div>
+        <table class="listing">
+            
+            <tr>
+                <td>127</td>
+                <td>
+                    <code><pre>func (p *Postgres) SaveOrder(o *model.Order) error {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>128</td>
+                <td>
+                    <code><pre>        tx, err := p.pool.Begin(context.Background())</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>129</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>130</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>131</td>
+                <td>
+                    <code><pre>                log.Error().Err(err).Str(&#34;order_uid&#34;, o.OrderUID).Msg(&#34;Failed to begin transaction&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>132</td>
+                <td>
+                    <code><pre>                return fmt.Errorf(&#34;begin transaction: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>133</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>134</td>
+                <td>
+                    <code><pre>        defer tx.Rollback(context.Background())</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>135</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>136</td>
+                <td>
+                    <code><pre>        if err := p.saveOrderBase(tx, o); err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>137</td>
+                <td>
+                    <code><pre>                return err</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>138</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>139</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>140</td>
+                <td>
+                    <code><pre>        err = tx.Commit(context.Background())</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>141</td>
+                <td>
+                    <code><pre>        if err != nil {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>142</td>
+                <td>
+                    <code><pre>                log.Error().Err(err).Str(&#34;order_uid&#34;, o.OrderUID).Msg(&#34;Failed to commit transaction&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>143</td>
+                <td>
+                    <code><pre>                return fmt.Errorf(&#34;commit: %w&#34;, err)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>144</td>
+                <td>
+                    <code><pre>        }</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>145</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>146</td>
+                <td>
+                    <code><pre>        log.Info().Str(&#34;order_uid&#34;, o.OrderUID).Msg(&#34;Order saved&#34;)</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>147</td>
+                <td>
+                    <code><pre></pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>148</td>
+                <td>
+                    <code><pre>        return nil</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>149</td>
+                <td>
+                    <code><pre>}</pre></code>
+                </td>
+            </tr>
+            
+        </table>
+        
+        <div class="funcname" id="fn_Postgres.Close">func Postgres.Close</div>
+        <div class="info">
+            <a href="#s_fn_Postgres.Close">Back</a>
+            <p>In <code>/home/magiconion/demo-service/internal/storage/postgres.go</code>:</p>
+        </div>
+        <table class="listing">
+            
+            <tr>
+                <td>151</td>
+                <td>
+                    <code><pre>func (p *Postgres) Close() {</pre></code>
+                </td>
+            </tr>
+            
+            <tr class="miss">
+                <td>152</td>
+                <td>
+                    <code><pre>        p.pool.Close()</pre></code>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>153</td>
+                <td>
+                    <code><pre>}</pre></code>
+                </td>
+            </tr>
+            
+        </table>
+         
+
+        <!--    Can be parsed by external script
+                PACKAGE:demo-service/internal/storage DONE:42.0
+        -->
+         
+
+        <div id="summaryWrapper">
+        
+            <div class="package">Report Total</div>
+            <div id="totalcov">35.0%</div>
+         
+        </div>
+         
+        
+	</body>
+</html>

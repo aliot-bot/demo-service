@@ -58,6 +58,72 @@ func (p *Postgres) saveOrderBase(tx pgx.Tx, o *model.Order) error {
 	return nil
 }
 
+func (p *Postgres) saveDelivery(tx pgx.Tx, o *model.Order) error {
+	_, err := tx.Exec(context.Background(),
+		`INSERT INTO deliveries (order_uid, name, phone, zip, city, address, region, email)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         ON CONFLICT (order_uid) DO UPDATE SET
+            name = EXCLUDED.name,
+            phone = EXCLUDED.phone,
+            zip = EXCLUDED.zip,
+            city = EXCLUDED.city,
+            address = EXCLUDED.address,
+            region = EXCLUDED.region,
+            email = EXCLUDED.email`,
+		o.OrderUID, o.Delivery.Name, o.Delivery.Phone, o.Delivery.Zip, o.Delivery.City,
+		o.Delivery.Address, o.Delivery.Region, o.Delivery.Email)
+	if err != nil {
+		log.Error().Err(err).Str("order_uid", o.OrderUID).Msg("Failed to insert delivery")
+		return fmt.Errorf("insert delivery: %w", err)
+	}
+	return nil
+}
+
+func (p *Postgres) savePayment(tx pgx.Tx, o *model.Order) error {
+	_, err := tx.Exec(context.Background(),
+		`INSERT INTO payments (order_uid, transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+         ON CONFLICT (order_uid) DO UPDATE SET
+            transaction = EXCLUDED.transaction,
+            request_id = EXCLUDED.request_id,
+            currency = EXCLUDED.currency,
+            provider = EXCLUDED.provider,
+            amount = EXCLUDED.amount,
+            payment_dt = EXCLUDED.payment_dt,
+            bank = EXCLUDED.bank,
+            delivery_cost = EXCLUDED.delivery_cost,
+            goods_total = EXCLUDED.goods_total,
+            custom_fee = EXCLUDED.custom_fee`,
+		o.OrderUID, o.Payment.Transaction, o.Payment.RequestID, o.Payment.Currency, o.Payment.Provider,
+		o.Payment.Amount, o.Payment.PaymentDt, o.Payment.Bank, o.Payment.DeliveryCost,
+		o.Payment.GoodsTotal, o.Payment.CustomFee)
+	if err != nil {
+		log.Error().Err(err).Str("order_uid", o.OrderUID).Msg("Failed to insert payment")
+		return fmt.Errorf("insert payment: %w", err)
+	}
+	return nil
+}
+
+func (p *Postgres) saveItems(tx pgx.Tx, o *model.Order) error {
+	_, err := tx.Exec(context.Background(), `DELETE FROM items WHERE order_uid = $1`, o.OrderUID)
+	if err != nil {
+		log.Error().Err(err).Str("order_uid", o.OrderUID).Msg("Failed to delete old items")
+		return fmt.Errorf("delete items: %w", err)
+	}
+	for _, item := range o.Items {
+		_, err = tx.Exec(context.Background(),
+			`INSERT INTO items (order_uid, chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+			o.OrderUID, item.ChrtID, item.TrackNumber, item.Price, item.Rid, item.Name,
+			item.Sale, item.Size, item.TotalPrice, item.NmID, item.Brand, item.Status)
+		if err != nil {
+			log.Error().Err(err).Str("order_uid", o.OrderUID).Msg("Failed to insert item")
+			return fmt.Errorf("insert item: %w", err)
+		}
+	}
+	return nil
+}
+
 func (p *Postgres) SaveOrder(o *model.Order) error {
 	tx, err := p.pool.Begin(context.Background())
 
