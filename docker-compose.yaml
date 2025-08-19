@@ -8,6 +8,6 @@ services:
       POSTGRES_USER: demo
       POSTGRES_PASSWORD: demo
       POSTGRES_DB: demo
-    ports: ["5432:5432"]
+    ports: ["5433:5432"]
     volumes: [pg_data:/var/lib/postgresql/data]
 volumes: { pg_data: {} }
