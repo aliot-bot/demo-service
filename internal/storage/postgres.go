@@ -136,6 +136,15 @@ func (p *Postgres) SaveOrder(o *model.Order) error {
 	if err := p.saveOrderBase(tx, o); err != nil {
 		return err
 	}
+	if err := p.saveDelivery(tx, o); err != nil {
+		return err
+	}
+	if err := p.savePayment(tx, o); err != nil {
+		return err
+	}
+	if err := p.saveItems(tx, o); err != nil {
+		return err
+	}
 
 	err = tx.Commit(context.Background())
 	if err != nil {
