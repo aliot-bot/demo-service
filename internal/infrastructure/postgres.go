@@ -28,69 +28,74 @@ func New(ctx context.Context, dsn string) (*Postgres, error) {
 }
 
 func (p *Postgres) SaveOrder(o *model.Order) error {
-	tx, err := p.pool.Begin(context.Background())
+	ctx := context.Background() // Используем новый контекст для транзакции
+	tx, err := p.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
 	}
-	defer tx.Rollback(context.Background())
 
-	_, err = tx.Exec(context.Background(),
+	_, err = tx.Exec(ctx,
 		`INSERT INTO orders (order_uid, track_number, entry, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard)
-		 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		 ON CONFLICT (order_uid) DO UPDATE SET
-		 track_number=EXCLUDED.track_number, entry=EXCLUDED.entry, locale=EXCLUDED.locale,
-		 internal_signature=EXCLUDED.internal_signature, customer_id=EXCLUDED.customer_id,
-		 delivery_service=EXCLUDED.delivery_service, shardkey=EXCLUDED.shardkey, sm_id=EXCLUDED.sm_id,
-		 date_created=EXCLUDED.date_created, oof_shard=EXCLUDED.oof_shard`,
+		 track_number = EXCLUDED.track_number, entry = EXCLUDED.entry, locale = EXCLUDED.locale,
+		 internal_signature = EXCLUDED.internal_signature, customer_id = EXCLUDED.customer_id,
+		 delivery_service = EXCLUDED.delivery_service, shardkey = EXCLUDED.shardkey, sm_id = EXCLUDED.sm_id,
+		 date_created = EXCLUDED.date_created, oof_shard = EXCLUDED.oof_shard`,
 		o.OrderUID, o.TrackNumber, o.Entry, o.Locale, o.InternalSignature, o.CustomerID,
 		o.DeliveryService, o.Shardkey, o.SmID, o.DateCreated, o.OofShard)
 	if err != nil {
+		tx.Rollback(ctx)
 		return fmt.Errorf("insert order: %w", err)
 	}
 
-	_, err = tx.Exec(context.Background(),
+	_, err = tx.Exec(ctx,
 		`INSERT INTO deliveries (order_uid, name, phone, zip, city, address, region, email)
-		 VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		 ON CONFLICT (order_uid) DO UPDATE SET
-		 name=EXCLUDED.name, phone=EXCLUDED.phone, zip=EXCLUDED.zip, city=EXCLUDED.city,
-		 address=EXCLUDED.address, region=EXCLUDED.region, email=EXCLUDED.email`,
+		 name = EXCLUDED.name, phone = EXCLUDED.phone, zip = EXCLUDED.zip, city = EXCLUDED.city,
+		 address = EXCLUDED.address, region = EXCLUDED.region, email = EXCLUDED.email`,
 		o.OrderUID, o.Delivery.Name, o.Delivery.Phone, o.Delivery.Zip, o.Delivery.City,
 		o.Delivery.Address, o.Delivery.Region, o.Delivery.Email)
 	if err != nil {
+		tx.Rollback(ctx)
 		return fmt.Errorf("insert delivery: %w", err)
 	}
 
-	_, err = tx.Exec(context.Background(),
+	_, err = tx.Exec(ctx,
 		`INSERT INTO payments (order_uid, transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee)
-		 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		 ON CONFLICT (order_uid) DO UPDATE SET
-		 transaction=EXCLUDED.transaction, request_id=EXCLUDED.request_id, currency=EXCLUDED.currency,
-		 provider=EXCLUDED.provider, amount=EXCLUDED.amount, payment_dt=EXCLUDED.payment_dt,
-		 bank=EXCLUDED.bank, delivery_cost=EXCLUDED.delivery_cost, goods_total=EXCLUDED.goods_total,
-		 custom_fee=EXCLUDED.custom_fee`,
+		 transaction = EXCLUDED.transaction, request_id = EXCLUDED.request_id, currency = EXCLUDED.currency,
+		 provider = EXCLUDED.provider, amount = EXCLUDED.amount, payment_dt = EXCLUDED.payment_dt,
+		 bank = EXCLUDED.bank, delivery_cost = EXCLUDED.delivery_cost, goods_total = EXCLUDED.goods_total,
+		 custom_fee = EXCLUDED.custom_fee`,
 		o.OrderUID, o.Payment.Transaction, o.Payment.RequestID, o.Payment.Currency, o.Payment.Provider,
 		o.Payment.Amount, o.Payment.PaymentDt, o.Payment.Bank, o.Payment.DeliveryCost,
 		o.Payment.GoodsTotal, o.Payment.CustomFee)
 	if err != nil {
+		tx.Rollback(ctx)
 		return fmt.Errorf("insert payment: %w", err)
 	}
 
-	_, err = tx.Exec(context.Background(), `DELETE FROM items WHERE order_uid=$1`, o.OrderUID)
+	_, err = tx.Exec(ctx, `DELETE FROM items WHERE order_uid = $1`, o.OrderUID)
 	if err != nil {
+		tx.Rollback(ctx)
 		return fmt.Errorf("delete items: %w", err)
 	}
 	for _, item := range o.Items {
-		_, err = tx.Exec(context.Background(),
-			`INSERT INTO items (order_uid,chrt_id,track_number,price,rid,name,sale,size,total_price,nm_id,brand,status)
-			 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+		_, err = tx.Exec(ctx,
+			`INSERT INTO items (order_uid, chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status)
+			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
 			o.OrderUID, item.ChrtID, item.TrackNumber, item.Price, item.Rid, item.Name,
 			item.Sale, item.Size, item.TotalPrice, item.NmID, item.Brand, item.Status)
 		if err != nil {
+			tx.Rollback(ctx)
 			return fmt.Errorf("insert item: %w", err)
 		}
 	}
 
-	return tx.Commit(context.Background())
+	return tx.Commit(ctx)
 }
 
 func (p *Postgres) Close() {

@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"demo-service/internal/infrastructure"
+	"log"
 	"os"
 	"os/signal"
 )
@@ -12,23 +13,22 @@ func main() {
 	defer stop()
 
 	dsn := "postgres://demo:demo@localhost:5433/demo"
-	store, err := storage.New(ctx, dsn)
+	store, err := infrastructure.New(ctx, dsn)
 	if err != nil {
-		fmt.Println("Не удалось подключиться к базе:", err)
-		return
+		log.Fatalf("Не удалось подключиться к базе: %v", err)
 	}
 	defer store.Close()
 
-	consumer := storage.NewKafkaConsumer([]string{"localhost:9092"}, "orders", "demo-group", store)
+	consumer := infrastructure.NewKafkaConsumer([]string{"localhost:9092"}, "orders", "demo-group", store)
 	defer consumer.Close()
 
 	go func() {
 		if err := consumer.Consume(ctx); err != nil {
-			fmt.Println("Ошибка в Kafka consumer:", err)
+			log.Fatalf("Ошибка в Kafka consumer: %v", err)
 		}
 	}()
 
-	fmt.Println("Сервис запущен")
+	log.Println("Сервис запущен")
 	<-ctx.Done()
-	fmt.Println("Сервис остановлен")
+	log.Println("Сервис остановлен")
 }

@@ -16,7 +16,7 @@ cover-report: cover
 
 git-all:
 	git add .
-	git commit -m "5"
+	git commit -m "6"
 	git push origin main
 
 clean:

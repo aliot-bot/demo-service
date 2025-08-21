@@ -16,13 +16,13 @@ type Payment struct {
 	Transaction  string `json:"transaction"`
 	RequestID    string `json:"request_id"`
 	Currency     string `json:"currency"`
-	Provider     string `json:"proveder"`
+	Provider     string `json:"provider"`
 	Amount       int    `json:"amount"`
 	PaymentDt    int64  `json:"payment_dt"`
 	Bank         string `json:"bank"`
 	DeliveryCost int    `json:"delivery_cost"`
 	GoodsTotal   int    `json:"goods_total"`
-	CustomFee    int    `json:"costom_fee"`
+	CustomFee    int    `json:"custom_fee"`
 }
 
 type Item struct {
@@ -41,7 +41,7 @@ type Item struct {
 
 type Order struct {
 	OrderUID          string    `json:"order_uid"`
-	TrackNumber       string    `json:"treack_number"`
+	TrackNumber       string    `json:"track_number"`
 	Entry             string    `json:"entry"`
 	Delivery          Delivery  `json:"delivery"`
 	Payment           Payment   `json:"payment"`
@@ -52,6 +52,6 @@ type Order struct {
 	DeliveryService   string    `json:"delivery_service"`
 	Shardkey          string    `json:"shardkey"`
 	SmID              int       `json:"sm_id"`
-	DateCreated       time.Time `json:"data_created"`
+	DateCreated       time.Time `json:"date_created"`
 	OofShard          string    `json:"oof_shard"`
 }

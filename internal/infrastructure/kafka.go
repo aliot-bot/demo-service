@@ -5,6 +5,7 @@ import (
 	"demo-service/internal/model"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -19,40 +20,41 @@ func NewKafkaConsumer(brokers []string, topic, groupID string, storage *Postgres
 		Brokers:  brokers,
 		Topic:    topic,
 		GroupID:  groupID,
-		MinBytes: 1e3,  // минимум 1KB
-		MaxBytes: 10e6, // максимум 10MB
+		MinBytes: 1e3,
+		MaxBytes: 10e6,
 	})
 	return &KafkaConsumer{reader: r, storage: storage}
 }
 
 func (c *KafkaConsumer) Consume(ctx context.Context) error {
 	for {
-		// проверка на завершение контекста
-		if ctx.Err() != nil {
+		select {
+		case <-ctx.Done():
 			return ctx.Err()
-		}
+		default:
+			msg, err := c.reader.ReadMessage(ctx)
+			if err != nil {
+				log.Printf("Ошибка чтения сообщения из Kafka: %v", err)
+				return fmt.Errorf("read message: %w", err)
+			}
+			log.Printf("Получено сообщение: %s", string(msg.Value))
 
-		msg, err := c.reader.ReadMessage(ctx)
-		if err != nil {
-			return fmt.Errorf("read message: %w", err)
-		}
+			var order model.Order
+			if err := json.Unmarshal(msg.Value, &order); err != nil {
+				log.Printf("Ошибка парсинга сообщения: %v, данные: %s", err, string(msg.Value))
+				continue
+			}
 
-		var order model.Order
-		if err := json.Unmarshal(msg.Value, &order); err != nil {
-			fmt.Println("Ошибка при парсинге сообщения:", err)
-			continue
-		}
+			if err := c.storage.SaveOrder(&order); err != nil {
+				log.Printf("Ошибка сохранения заказа %s: %v", order.OrderUID, err)
+				continue
+			}
 
-		if err := c.storage.SaveOrder(&order); err != nil {
-			fmt.Println("Ошибка при сохранении заказа:", err)
-			continue
-		}
+			log.Printf("Заказ сохранён: %s", order.OrderUID)
 
-		fmt.Println("Заказ сохранён:", order.OrderUID)
-
-		// фиксируем оффсет
-		if err := c.reader.CommitMessages(ctx, msg); err != nil {
-			fmt.Println("Ошибка при коммите сообщения:", err)
+			if err := c.reader.CommitMessages(ctx, msg); err != nil {
+				log.Printf("Ошибка коммита сообщения для заказа %s: %v", order.OrderUID, err)
+			}
 		}
 	}
 }
