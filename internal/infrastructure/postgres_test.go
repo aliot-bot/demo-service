@@ -7,14 +7,15 @@ import (
 	"time"
 )
 
-func setupTestDB(t *testing.T) (*Postgres, context.Context, func()) {
+func setupTestDB(t *testing.T) (*Postgres, *Cache, context.Context, func()) {
 	ctx := context.Background()
 	dsn := "postgres://demo:demo@localhost:5433/demo"
 	p, err := New(ctx, dsn)
 	if err != nil {
 		t.Fatalf("Failed to connect to DB: %v", err)
 	}
-	return p, ctx, func() { p.Close() }
+	cache := NewCache()
+	return p, cache, ctx, func() { p.Close() }
 }
 
 func verifyInserted(t *testing.T, ctx context.Context, p *Postgres, table, orderUID string, expectedCount int) {
@@ -29,7 +30,7 @@ func verifyInserted(t *testing.T, ctx context.Context, p *Postgres, table, order
 }
 
 func TestSaveOrder(t *testing.T) {
-	p, ctx, cleanup := setupTestDB(t)
+	p, cache, ctx, cleanup := setupTestDB(t)
 	defer cleanup()
 
 	order := &model.Order{
@@ -63,36 +64,12 @@ func TestSaveOrder(t *testing.T) {
 			GoodsTotal:   800,
 		},
 		Items: []model.Item{
-			{
-				ChrtID:      1,
-				TrackNumber: "TRACK123",
-				Price:       500,
-				Rid:         "rid1",
-				Name:        "Item1",
-				Sale:        50,
-				Size:        "M",
-				TotalPrice:  450,
-				NmID:        111,
-				Brand:       "Brand1",
-				Status:      202,
-			},
-			{
-				ChrtID:      2,
-				TrackNumber: "TRACK123",
-				Price:       550,
-				Rid:         "rid2",
-				Name:        "Item2",
-				Sale:        50,
-				Size:        "L",
-				TotalPrice:  500,
-				NmID:        222,
-				Brand:       "Brand2",
-				Status:      202,
-			},
+			{ChrtID: 1, TrackNumber: "TRACK123", Price: 500, Rid: "rid1", Name: "Item1", Sale: 50, Size: "M", TotalPrice: 450, NmID: 111, Brand: "Brand1", Status: 202},
+			{ChrtID: 2, TrackNumber: "TRACK123", Price: 550, Rid: "rid2", Name: "Item2", Sale: 50, Size: "L", TotalPrice: 500, NmID: 222, Brand: "Brand2", Status: 202},
 		},
 	}
 
-	if err := p.SaveOrder(order); err != nil {
+	if err := p.SaveOrder(order, cache); err != nil {
 		t.Fatalf("SaveOrder failed: %v", err)
 	}
 
@@ -103,7 +80,7 @@ func TestSaveOrder(t *testing.T) {
 }
 
 func TestGetOrder_Success(t *testing.T) {
-	p, ctx, cleanup := setupTestDB(t)
+	p, cache, ctx, cleanup := setupTestDB(t)
 	defer cleanup()
 
 	order := &model.Order{
@@ -137,23 +114,11 @@ func TestGetOrder_Success(t *testing.T) {
 			GoodsTotal:   1700,
 		},
 		Items: []model.Item{
-			{
-				ChrtID:      10,
-				TrackNumber: "TRACK999",
-				Price:       1000,
-				Rid:         "rid10",
-				Name:        "Item10",
-				Sale:        100,
-				Size:        "XL",
-				TotalPrice:  900,
-				NmID:        333,
-				Brand:       "Brand10",
-				Status:      200,
-			},
+			{ChrtID: 10, TrackNumber: "TRACK999", Price: 1000, Rid: "rid10", Name: "Item10", Sale: 100, Size: "XL", TotalPrice: 900, NmID: 333, Brand: "Brand10", Status: 200},
 		},
 	}
 
-	if err := p.SaveOrder(order); err != nil {
+	if err := p.SaveOrder(order, cache); err != nil {
 		t.Fatalf("SaveOrder failed: %v", err)
 	}
 
@@ -177,7 +142,7 @@ func TestGetOrder_Success(t *testing.T) {
 }
 
 func TestGetOrder_NotFound(t *testing.T) {
-	p, ctx, cleanup := setupTestDB(t)
+	p, _, ctx, cleanup := setupTestDB(t)
 	defer cleanup()
 
 	got, err := p.GetOrder(ctx, "non-existent-order")

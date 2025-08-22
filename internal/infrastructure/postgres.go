@@ -7,6 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 )
 
 type Postgres struct {
@@ -27,8 +28,8 @@ func New(ctx context.Context, dsn string) (*Postgres, error) {
 	return &Postgres{pool: pool}, nil
 }
 
-func (p *Postgres) SaveOrder(o *model.Order) error {
-	ctx := context.Background() // Используем новый контекст для транзакции
+func (p *Postgres) SaveOrder(o *model.Order, cache *Cache) error {
+	ctx := context.Background()
 	tx, err := p.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
@@ -95,7 +96,66 @@ func (p *Postgres) SaveOrder(o *model.Order) error {
 		}
 	}
 
-	return tx.Commit(ctx)
+	if err := tx.Commit(ctx); err != nil {
+		return err
+	}
+
+	if cache != nil {
+		cache.Set(o)
+	}
+
+	return nil
+}
+
+func (p *Postgres) LoadCache(ctx context.Context, cache *Cache) error {
+	rows, err := p.pool.Query(ctx, `
+		SELECT o.order_uid, o.track_number, o.entry, o.locale, o.internal_signature, o.customer_id, 
+		       o.delivery_service, o.shardkey, o.sm_id, o.date_created, o.oof_shard,
+		       d.name, d.phone, d.zip, d.city, d.address, d.region, d.email,
+		       p.transaction, p.request_id, p.currency, p.provider, p.amount, p.payment_dt, 
+		       p.bank, p.delivery_cost, p.goods_total, p.custom_fee
+		FROM orders o
+		LEFT JOIN deliveries d ON o.order_uid = d.order_uid
+		LEFT JOIN payments p ON o.order_uid = p.order_uid`)
+	if err != nil {
+		return fmt.Errorf("load cache query: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var order model.Order
+		err := rows.Scan(
+			&order.OrderUID, &order.TrackNumber, &order.Entry, &order.Locale, &order.InternalSignature,
+			&order.CustomerID, &order.DeliveryService, &order.Shardkey, &order.SmID, &order.DateCreated,
+			&order.OofShard, &order.Delivery.Name, &order.Delivery.Phone, &order.Delivery.Zip,
+			&order.Delivery.City, &order.Delivery.Address, &order.Delivery.Region, &order.Delivery.Email,
+			&order.Payment.Transaction, &order.Payment.RequestID, &order.Payment.Currency,
+			&order.Payment.Provider, &order.Payment.Amount, &order.Payment.PaymentDt, &order.Payment.Bank,
+			&order.Payment.DeliveryCost, &order.Payment.GoodsTotal, &order.Payment.CustomFee)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to scan order for cache")
+			continue
+		}
+		itemRows, err := p.pool.Query(ctx, `
+			SELECT chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status
+			FROM items WHERE order_uid = $1`, order.OrderUID)
+		if err != nil {
+			log.Error().Err(err).Str("order_uid", order.OrderUID).Msg("Failed to load items for cache")
+			continue
+		}
+		for itemRows.Next() {
+			var item model.Item
+			if err := itemRows.Scan(&item.ChrtID, &item.TrackNumber, &item.Price, &item.Rid, &item.Name,
+				&item.Sale, &item.Size, &item.TotalPrice, &item.NmID, &item.Brand, &item.Status); err != nil {
+				log.Error().Err(err).Str("order_uid", order.OrderUID).Msg("Failed to scan item")
+				continue
+			}
+			order.Items = append(order.Items, item)
+		}
+		itemRows.Close()
+		cache.Set(&order)
+	}
+	return nil
 }
 
 func (p *Postgres) Close() {

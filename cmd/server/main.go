@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"demo-service/internal/infrastructure"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -19,11 +20,18 @@ func main() {
 	}
 	defer store.Close()
 
+	cache := infrastructure.NewCache()
+	if err := store.LoadCache(ctx, cache); err != nil {
+		log.Fatal("Ошибка загрузки кеша")
+	} else {
+		fmt.Println("КЕЕЕЕЕЕЕЕЕЕЕЕЕШ")
+	}
+
 	consumer := infrastructure.NewKafkaConsumer([]string{"localhost:9092"}, "orders", "demo-group", store)
 	defer consumer.Close()
 
 	go func() {
-		if err := consumer.Consume(ctx); err != nil {
+		if err := consumer.Consume(ctx, cache); err != nil {
 			log.Fatalf("Ошибка в Kafka consumer: %v", err)
 		}
 	}()
