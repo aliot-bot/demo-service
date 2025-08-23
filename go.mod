@@ -3,6 +3,7 @@ module demo-service
 go 1.24.4
 
 require (
+	github.com/gorilla/mux v1.8.1
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/rs/zerolog v1.34.0
 	github.com/segmentio/kafka-go v0.4.48

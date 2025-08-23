@@ -1,0 +1,14 @@
+ <h1>Search for an item</h1>
+
+<form id="searchForm">
+  <h3>Item Uid: <input type="text" id="order_uid" required></h3>
+  <button type="submit">Search for the item</button>
+</form>
+
+<script>
+  document.getElementById("searchForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const uid = document.getElementById("order_uid").value;
+    window.location.href = "/order/" + uid;
+  });
+</script>

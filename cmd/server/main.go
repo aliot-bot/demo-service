@@ -36,6 +36,13 @@ func main() {
 		}
 	}()
 
+	server := infrastructure.NewServer(cache, store)
+	go func() {
+		if err := server.Start(":8081"); err != nil {
+			log.Printf("Сервер HTTP остановлен с ошибкой: %v", err)
+		}
+	}()
+
 	log.Println("Сервис запущен")
 	<-ctx.Done()
 	log.Println("Сервис остановлен")
