@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"demo-service/internal/infrastructure/cache"
 	"demo-service/internal/model"
 	"encoding/json"
 	"net/http"
@@ -17,7 +18,7 @@ func TestHandleGetOrder(t *testing.T) {
 	}
 	defer store.Close()
 
-	cache := NewCache()
+	cache := cache.NewCache()
 	order := makeTestOrder("test-http")
 	if err := store.SaveOrder(&order, cache); err != nil {
 		t.Fatalf("Save fail: %v", err)
