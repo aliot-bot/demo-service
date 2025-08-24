@@ -1,21 +1,24 @@
-package infrastructure
+package kafka
 
 import (
 	"context"
-	"demo-service/internal/model"
 	"encoding/json"
 	"fmt"
 	"log"
+
+	"demo-service/internal/infrastructure/cache"
+	"demo-service/internal/infrastructure/postgres"
+	"demo-service/internal/model"
 
 	"github.com/segmentio/kafka-go"
 )
 
 type KafkaConsumer struct {
 	reader  *kafka.Reader
-	storage *Postgres
+	storage *postgres.Postgres
 }
 
-func NewKafkaConsumer(brokers []string, topic, groupID string, storage *Postgres) *KafkaConsumer {
+func NewKafkaConsumer(brokers []string, topic, groupID string, storage *postgres.Postgres) *KafkaConsumer {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  brokers,
 		Topic:    topic,
@@ -26,7 +29,7 @@ func NewKafkaConsumer(brokers []string, topic, groupID string, storage *Postgres
 	return &KafkaConsumer{reader: reader, storage: storage}
 }
 
-func (c *KafkaConsumer) Consume(ctx context.Context, cache *Cache) error {
+func (c *KafkaConsumer) Consume(ctx context.Context, cacheStore *cache.Cache) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -46,7 +49,7 @@ func (c *KafkaConsumer) Consume(ctx context.Context, cache *Cache) error {
 			continue
 		}
 
-		if err := c.storage.SaveOrder(&order, cache); err != nil {
+		if err := c.storage.SaveOrder(&order, cacheStore); err != nil {
 			log.Printf("Ошибка сохранения заказа %s: %v", order.OrderUID, err)
 			continue
 		}

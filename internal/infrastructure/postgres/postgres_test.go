@@ -1,20 +1,21 @@
-package infrastructure
+package postgres
 
 import (
 	"context"
+	"demo-service/internal/infrastructure/cache"
 	"demo-service/internal/model"
 	"testing"
 	"time"
 )
 
-func setupTestDB(t *testing.T) (*Postgres, *Cache, context.Context, func()) {
+func setupTestDB(t *testing.T) (*Postgres, *cache.Cache, context.Context, func()) {
 	ctx := context.Background()
 	dsn := "postgres://demo:demo@localhost:5433/demo"
 	p, err := New(ctx, dsn)
 	if err != nil {
-		t.Fatalf("Failed to connect to DB: %v", err)
+		t.Fatalf("Не удалось подключиться к БД: %v", err)
 	}
-	cache := NewCache()
+	cache := cache.NewCache()
 	return p, cache, ctx, func() { p.Close() }
 }
 
@@ -22,10 +23,10 @@ func verifyInserted(t *testing.T, ctx context.Context, p *Postgres, table, order
 	var count int
 	err := p.pool.QueryRow(ctx, "SELECT COUNT(*) FROM "+table+" WHERE order_uid=$1", orderUID).Scan(&count)
 	if err != nil {
-		t.Fatalf("Failed to verify %s: %v", table, err)
+		t.Fatalf("Ошибка проверки %s: %v", table, err)
 	}
 	if count != expectedCount {
-		t.Errorf("Got %d rows in %s, want %d", count, table, expectedCount)
+		t.Errorf("Получено %d строк в %s, ожидалось %d", count, table, expectedCount)
 	}
 }
 
@@ -70,7 +71,7 @@ func TestSaveOrder(t *testing.T) {
 	}
 
 	if err := p.SaveOrder(order, cache); err != nil {
-		t.Fatalf("SaveOrder failed: %v", err)
+		t.Fatalf("Ошибка SaveOrder: %v", err)
 	}
 
 	verifyInserted(t, ctx, p, "orders", order.OrderUID, 1)
@@ -119,25 +120,25 @@ func TestGetOrder_Success(t *testing.T) {
 	}
 
 	if err := p.SaveOrder(order, cache); err != nil {
-		t.Fatalf("SaveOrder failed: %v", err)
+		t.Fatalf("Ошибка SaveOrder: %v", err)
 	}
 
 	got, err := p.GetOrder(ctx, order.OrderUID)
 	if err != nil {
-		t.Fatalf("GetOrder failed: %v", err)
+		t.Fatalf("Ошибка GetOrder: %v", err)
 	}
 	if got == nil {
-		t.Fatal("GetOrder returned nil order")
+		t.Fatal("GetOrder вернул nil заказ")
 	}
 
 	if got.OrderUID != order.OrderUID {
-		t.Errorf("expected OrderUID %s, got %s", order.OrderUID, got.OrderUID)
+		t.Errorf("ожидался OrderUID %s, получен %s", order.OrderUID, got.OrderUID)
 	}
 	if got.CustomerID != order.CustomerID {
-		t.Errorf("expected CustomerID %s, got %s", order.CustomerID, got.CustomerID)
+		t.Errorf("ожидался CustomerID %s, получен %s", order.CustomerID, got.CustomerID)
 	}
 	if len(got.Items) != len(order.Items) {
-		t.Errorf("expected %d items, got %d", len(order.Items), len(got.Items))
+		t.Errorf("ожидалось %d элементов, получено %d", len(order.Items), len(got.Items))
 	}
 }
 
@@ -147,9 +148,9 @@ func TestGetOrder_NotFound(t *testing.T) {
 
 	got, err := p.GetOrder(ctx, "non-existent-order")
 	if err == nil {
-		t.Errorf("expected error for non-existent order, got nil")
+		t.Errorf("ожидалась ошибка для несуществующего заказа, получено nil")
 	}
 	if got != nil {
-		t.Errorf("expected nil order, got %+v", got)
+		t.Errorf("ожидался nil заказ, получен %+v", got)
 	}
 }

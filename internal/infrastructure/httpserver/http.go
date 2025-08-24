@@ -1,28 +1,30 @@
-package infrastructure
+package httpserver
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"demo-service/internal/infrastructure/cache"
+	"demo-service/internal/infrastructure/postgres"
+
 	"github.com/gorilla/mux"
 )
 
 type Server struct {
-	cache  *Cache
-	store  *Postgres
+	cache  *cache.Cache
+	store  *postgres.Postgres
 	router *mux.Router
 }
 
-func NewServer(cache *Cache, store *Postgres) *Server {
+func NewServer(cacheStore *cache.Cache, store *postgres.Postgres) *Server {
 	s := &Server{
-		cache:  cache,
+		cache:  cacheStore,
 		store:  store,
 		router: mux.NewRouter(),
 	}
 	s.router.HandleFunc("/order/{order_uid}", s.handleGetOrder).Methods("GET")
 	s.router.HandleFunc("/", s.handleUserOrder).Methods("GET")
-	s.router.HandleFunc("/order_search", s.handleUserOrder).Methods("GET")
 	return s
 }
 

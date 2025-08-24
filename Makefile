@@ -5,7 +5,7 @@ test:
 	go test ./... -race -cover
 
 run:
-	go run ./cmd/server
+	go run ./cmd/
 
 cover:
 	gocov test ./... > coverage.json
@@ -16,8 +16,10 @@ cover-report: cover
 
 git-all:
 	git add .
-	git commit -m "9"
+	git commit -m "10"
 	git push origin main
 
 clean:
 	rm -f coverage.json coverage.html
+
+.PHONY: test run cover cover-report git-all clean db-ping

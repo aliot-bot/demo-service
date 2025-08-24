@@ -1,8 +1,9 @@
-package infrastructure
+package httpserver
 
 import (
 	"context"
 	"demo-service/internal/infrastructure/cache"
+	"demo-service/internal/infrastructure/postgres"
 	"demo-service/internal/model"
 	"encoding/json"
 	"net/http"
@@ -12,16 +13,16 @@ import (
 )
 
 func TestHandleGetOrder(t *testing.T) {
-	store, err := New(context.Background(), "postgres://demo:demo@localhost:5433/demo")
+	store, err := postgres.New(context.Background(), "postgres://demo:demo@localhost:5433/demo")
 	if err != nil {
-		t.Fatalf("DB connect fail: %v", err)
+		t.Fatalf("Ошибка подключения к БД: %v", err)
 	}
 	defer store.Close()
 
 	cache := cache.NewCache()
 	order := makeTestOrder("test-http")
 	if err := store.SaveOrder(&order, cache); err != nil {
-		t.Fatalf("Save fail: %v", err)
+		t.Fatalf("Ошибка сохранения: %v", err)
 	}
 
 	server := NewServer(cache, store)
@@ -30,15 +31,15 @@ func TestHandleGetOrder(t *testing.T) {
 	server.router.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("Expected 200, got %d", rr.Code)
+		t.Errorf("Ожидался код 200, получен %d", rr.Code)
 	}
 
 	var resp model.Order
 	if err := json.NewDecoder(rr.Body).Decode(&resp); err != nil {
-		t.Fatalf("Decode fail: %v", err)
+		t.Fatalf("Ошибка декодирования: %v", err)
 	}
 	if resp.OrderUID != order.OrderUID {
-		t.Errorf("Expected %s, got %s", order.OrderUID, resp.OrderUID)
+		t.Errorf("Ожидался %s, получен %s", order.OrderUID, resp.OrderUID)
 	}
 }
 
