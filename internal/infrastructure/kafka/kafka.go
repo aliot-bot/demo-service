@@ -54,6 +54,10 @@ func (c *KafkaConsumer) Consume(ctx context.Context, cacheStore *cache.Cache) er
 			continue
 		}
 
+		if cacheStore.Set(&order) {
+			log.Printf("Заказ %s добавлен в кэш", order.OrderUID)
+		}
+
 		log.Printf("Заказ обработан: %s", order.OrderUID)
 
 		if err := c.reader.CommitMessages(ctx, msg); err != nil {

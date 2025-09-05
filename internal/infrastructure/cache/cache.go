@@ -27,7 +27,7 @@ func (c *Cache) Set(order *model.Order) bool {
 	}
 
 	c.orders[order.OrderUID] = order
-	log.Printf("Заказ %s добавлен в кэш", order.OrderUID)
+	//	log.Printf("Заказ %s добавлен в кэш", order.OrderUID)
 	return true
 }
 
