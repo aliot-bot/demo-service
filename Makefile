@@ -7,6 +7,9 @@ test:
 run:
 	go run ./cmd/
 
+run-prod:
+	go run ./producer/
+
 cover:
 	gocov test ./... > coverage.json
 	gocov-html coverage.json > coverage.html
@@ -14,12 +17,18 @@ cover:
 cover-report: cover
 	xdg-open coverage.html || open coverage.html || start coverage.html
 
+dc-up:
+	docker-compose up -d
+
+dc-down:
+	docker-compose down 
+
 git-all:
 	git add .
-	git commit -m "11"
+	git commit -m "12"
 	git push origin main
 
 clean:
 	rm -f coverage.json coverage.html
 
-.PHONY: test run cover cover-report git-all clean db-ping
+.PHONY: test run cover cover-report git-all clean db-ping run-prod dc-up dc-down
