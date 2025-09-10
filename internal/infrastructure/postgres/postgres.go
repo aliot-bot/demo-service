@@ -15,6 +15,7 @@ type Postgres struct {
 	pool *pgxpool.Pool
 }
 
+// Создание нового подключения к бд
 func New(ctx context.Context, dsn string) (*Postgres, error) {
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
@@ -27,6 +28,7 @@ func New(ctx context.Context, dsn string) (*Postgres, error) {
 	return &Postgres{pool: pool}, nil
 }
 
+// сохранение заказ в бд с использованием транзакции
 func (p *Postgres) SaveOrder(o *model.Order, c *cache.Cache) error {
 	ctx := context.Background()
 	tx, err := p.pool.Begin(ctx)
@@ -34,6 +36,7 @@ func (p *Postgres) SaveOrder(o *model.Order, c *cache.Cache) error {
 		return fmt.Errorf("не удалось начать транзакцию: %w", err)
 	}
 
+	// вставка или обновления заказа
 	_, err = tx.Exec(ctx, `INSERT INTO orders (order_uid, track_number, entry, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
 		ON CONFLICT (order_uid) DO UPDATE SET track_number=EXCLUDED.track_number, entry=EXCLUDED.entry, locale=EXCLUDED.locale,
@@ -47,6 +50,7 @@ func (p *Postgres) SaveOrder(o *model.Order, c *cache.Cache) error {
 		return fmt.Errorf("ошибка добавления заказа: %w", err)
 	}
 
+	// вставка и обвноление данных доставки
 	_, err = tx.Exec(ctx, `INSERT INTO deliveries (order_uid, name, phone, zip, city, address, region, email)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
 		ON CONFLICT (order_uid) DO UPDATE SET name=EXCLUDED.name, phone=EXCLUDED.phone, zip=EXCLUDED.zip, city=EXCLUDED.city,
@@ -58,6 +62,7 @@ func (p *Postgres) SaveOrder(o *model.Order, c *cache.Cache) error {
 		return fmt.Errorf("ошибка добавления доставки: %w", err)
 	}
 
+	// вставка или обновление данных платежа
 	_, err = tx.Exec(ctx, `INSERT INTO payments (order_uid, transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
 		ON CONFLICT (order_uid) DO UPDATE SET transaction=EXCLUDED.transaction, request_id=EXCLUDED.request_id, currency=EXCLUDED.currency,
@@ -71,12 +76,14 @@ func (p *Postgres) SaveOrder(o *model.Order, c *cache.Cache) error {
 		return fmt.Errorf("ошибка добавления платежа: %w", err)
 	}
 
+	// удаление старых элементов заказа
 	_, err = tx.Exec(ctx, `DELETE FROM items WHERE order_uid=$1`, o.OrderUID)
 	if err != nil {
 		tx.Rollback(ctx)
 		return fmt.Errorf("ошибка удаления элементов: %w", err)
 	}
 
+	// вставка новых элементов заказа
 	for _, it := range o.Items {
 		_, err = tx.Exec(ctx, `INSERT INTO items (order_uid, chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status)
 			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
@@ -88,6 +95,7 @@ func (p *Postgres) SaveOrder(o *model.Order, c *cache.Cache) error {
 		}
 	}
 
+	// фиксация транзакции
 	if err := tx.Commit(ctx); err != nil {
 		return fmt.Errorf("ошибка коммита транзакции: %w", err)
 	}
@@ -95,6 +103,7 @@ func (p *Postgres) SaveOrder(o *model.Order, c *cache.Cache) error {
 	return nil
 }
 
+// заказы из бд в кэщ
 func (p *Postgres) LoadCache(ctx context.Context, c *cache.Cache) error {
 	rows, err := p.pool.Query(ctx, `
 		SELECT o.order_uid, o.track_number, o.entry, o.locale, o.internal_signature, o.customer_id,
@@ -112,6 +121,7 @@ func (p *Postgres) LoadCache(ctx context.Context, c *cache.Cache) error {
 
 	for rows.Next() {
 		var o model.Order
+		// считывание данных заказа
 		err := rows.Scan(
 			&o.OrderUID, &o.TrackNumber, &o.Entry, &o.Locale, &o.InternalSignature,
 			&o.CustomerID, &o.DeliveryService, &o.Shardkey, &o.SmID, &o.DateCreated,
@@ -140,11 +150,13 @@ func (p *Postgres) LoadCache(ctx context.Context, c *cache.Cache) error {
 			o.Items = append(o.Items, it)
 		}
 		itemRows.Close()
+		// сохранение заказа в кэщ
 		c.Set(&o)
 	}
 	return nil
 }
 
+// получить заказ из бд по orderUID
 func (p *Postgres) GetOrder(ctx context.Context, orderUID string) (*model.Order, error) {
 	o := &model.Order{}
 

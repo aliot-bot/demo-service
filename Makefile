@@ -25,7 +25,7 @@ dc-down:
 
 git-all:
 	git add .
-	git commit -m "12"
+	git commit -m "13"
 	git push origin main
 
 clean:
